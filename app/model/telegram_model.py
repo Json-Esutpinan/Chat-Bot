@@ -53,7 +53,7 @@ class TelegramBot:
                 await self.proccess_photo(self.update.message.photo)
             else:
                 await self.send_telegram_message("Hola! 👋.\n\nSi deseas iniciar un reporte escribe /start u Hola para empezar.")
-                self.redis_cache.hset(self.session_key, "state", None)
+                self.redis_cache.delete(self.session_key)
                 return
         elif self.message_type == "callback_query":
             await self.proccess_callback(self.update.callback_query.data)
@@ -94,13 +94,13 @@ class TelegramBot:
             else:
                 await self.send_telegram_message("Opción no reconocida. Por favor, elige una opción válida.")
         else:
-            await self.send_telegram_message("Por favor, sigue las instrucciones o responde a la pregunta anterior. \n\nSi te perdiste, escribe /start para reiniciar.")
+            await self.send_telegram_message("Ups, no es lo que esperaba. \n\nPor favor, sigue las instrucciones. \n\nSi te perdiste, escribe /start para reiniciar.")
             
             
     async def proccess_location(self, location):
         state = self.redis_cache.hget(self.session_key, "state")
         if state != "wait_location":
-            await self.send_telegram_message("Ups, no es lo que esperaba. \n\nPor favor, sigue las instrucciones anteriores.")
+            await self.send_telegram_message("Ups, no es lo que esperaba. \n\nPor favor, sigue las instrucciones. \n\nSi te perdiste, escribe /start para reiniciar.")
             return
         self.redis_cache.hset(self.session_key, "location", f"{location.latitude},{location.longitude}")
         self.redis_cache.hset(self.session_key, "state", STATE["wait_location"])
@@ -111,7 +111,7 @@ class TelegramBot:
     async def proccess_photo(self, photos):
         state = self.redis_cache.hget(self.session_key, "state")
         if state != "wait_photo":
-            await self.send_telegram_message("Ups, no es lo que esperaba. Por favor, sigue las instrucciones anteriores.")
+            await self.send_telegram_message("Ups, no es lo que esperaba. \n\nPor favor, sigue las instrucciones. \n\nSi te perdiste, escribe /start para reiniciar.")
             return
         photo_file_id = photos[-1].file_id
         self.redis_cache.hset(self.session_key, "photo_file_id", photo_file_id)
