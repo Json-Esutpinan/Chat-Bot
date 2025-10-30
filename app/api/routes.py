@@ -5,4 +5,8 @@ router = APIRouter()
 
 @router.post("/webhook")
 async def webhook(request: Request):
-    return await webhook_handler(request)
+    try:
+        await webhook_handler(request)
+    except Exception as e:
+        print(f"Error handling webhook: {e}")
+    return {"status": "ok"}
