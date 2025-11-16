@@ -1,46 +1,49 @@
-import os
-import time
-import redis
-from pathlib import Path
-from telegram import Update, Bot
-from fastapi import Request
-from dotenv import load_dotenv
-from model.telegram_model import TelegramBot
-from model.state_model import SessionManager, State
-load_dotenv()
+from telegram import Update
+from fastapi import APIRouter, Request, Depends
+from app.service.session.ReportDataManager import ReportDataManager
+from app.service.session.State import State
+from app.service.session.StateManager import StateManager
+from app.use_cases.process_message_uc import ProcessMessageUseCase
+from app.use_cases.process_callback_uc import ProcessCallbackUseCase
+from app.use_cases.submit_report_uc import SubmitReportUseCase
+from app.config.dependencies import (
+    get_report_data_manager,
+    get_state_manager,
+    get_process_message_uc,
+    get_process_callback_uc,
+    get_submit_report_uc
+)
 
+router = APIRouter()
 
-bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-model_url = os.getenv("MODEL_URL")
-storage_path = Path(os.getenv("IMAGE_DIR", "public/images"))
-storage_path.mkdir(parents=True, exist_ok=True)
-redis_client = redis.Redis(host=os.getenv("REDIS_HOST"), port=os.getenv("REDIS_PORT"), decode_responses=True)
-
-async def webhook_handler(request: Request):
+@router.post("/webhook")
+async def webhook_handler(
+    request: Request,
+    process_message: ProcessMessageUseCase = Depends(get_process_message_uc),
+    process_callback: ProcessCallbackUseCase = Depends(get_process_callback_uc),
+    report_manager: ReportDataManager = Depends(get_report_data_manager),
+):
+    update_data = await request.json()
+    update = Update.de_json(update_data, None) 
     
-    data = await request.json()
-    update = Update.de_json(data)
-    chat_id = update.effective_chat.id
-    user_id = update.effective_user.id
-    state_session = SessionManager(redis_client, f"session:{user_id}")
-    bot_ = TelegramBot(redis_client,state_session, model_url, storage_path, Bot(token=bot_token), chat_id, user_id)
-    
+    if not update.effective_chat:
+        return {"status": "error", "message": "Invalid update"}
+
+    chat_id = str(update.effective_chat.id)
+    user_id = str(update.effective_user.id)
+    user_name = update.effective_user.username or f"user_{user_id}"
+    await report_manager.set_report_field(chat_id,'username', user_name )
+        
     if update.callback_query:
-        await bot_.proccess_callback(update.callback_query.data)
+        await process_callback.execute(
+            data=update.callback_query.data, 
+            chat_id=chat_id
+        )
+        
     elif update.message:
-        if update.message.text and state_session.get_state() in [State.START, State.WAIT_DESCRIPTION]:
-            await bot_.proccess_text(update.message.text)
-        elif update.message.location and state_session.get_state() == State.WAIT_LOCATION:
-            await bot_.proccess_location(update.message.location)
-        elif update.message.photo and state_session.get_state() == State.WAIT_PHOTO:
-            image_path = await bot_.proccess_photo(update.message.photo)
-            response = await bot_.send_to_model(image_path)
-            if response["prediction"]["Flooded"] >.6:
-                await self.send_telegram_message("¡Gracias! 📸 Foto recibida. Tu reporte se registró correctamente")
-            else:
-                await self.send_telegram_message("La imagen enviada no parece mostrar una escena de inundación. Por favor, verifica y envía una foto adecuada.")
-                return
-        else:
-            await bot_.send_telegram_message("¡Ups! No era lo que esperaba.\n\nSi deseas iniciar un reporte escribe /start u Hola.")
-            return {"status": "ok"} 
+        await process_message.execute(
+            message=update.message,
+            chat_id=chat_id
+        )
+        
     return {"status": "ok"}
