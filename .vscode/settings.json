@@ -1,0 +1,26 @@
+{
+    "python-envs.pythonProjects": [
+        {
+            "path": "C:\\Users\\jeiso\\OneDrive\\Code\\Chat-Bot\\.venv\\Scripts\\python.exe",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        },
+        {
+            "path": "",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        },
+        {
+            "path": ".venv/Scripts/python.exe",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip",
+            "workspace": "Chat-Bot"
+        },
+        {
+            "path": ".venv",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip",
+            "workspace": "Chat-Bot"
+        }
+    ]
+}
