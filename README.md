@@ -25,3 +25,4 @@ Para desplegar el chatbot, sigue estos pasos básicos:
    ```bash
    uvicorn app.main:app
    ```
+**GeoJson Bogotá:** Secretaría Distrital de Planeación. (2022, August 5). Municipio Bogotá D.C. - Dataset - Datos Abiertos Bogotá. https://datosabiertos.bogota.gov.co/en/dataset/municipio
