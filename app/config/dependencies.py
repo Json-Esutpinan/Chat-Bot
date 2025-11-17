@@ -28,8 +28,8 @@ load_dotenv(override=True)
 # --- Constantes y Carga de Recursos ---
 BOGOTA_BOUNDARY = gpd.read_file(str(os.getenv("BOGOTA_GEOJSON_PATH"))).geometry.iloc[0]
 GATEWAY_URL = os.getenv("APIGATEWAY")
-API_REPORT_URL = f"{GATEWAY_URL}/reports"
-MODEL_URL = f"{GATEWAY_URL}/flood-model/classify-image"
+API_REPORT_URL = f"{GATEWAY_URL}01/reports"
+MODEL_URL = f"{GATEWAY_URL}80/api/classify-image"
 
 # --- Singletons de Infraestructura ---
 _redis_repo: Optional[ICacheRepository] = None
