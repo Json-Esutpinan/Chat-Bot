@@ -64,7 +64,6 @@ class ReportDataManager:
             return [item.decode('utf-8') if isinstance(item, bytes) else item for item in items]
 
         flooded_raw = await get_decoded_list(f"{session_key}:img:flooded")
-        nonf_raw = await get_decoded_list(f"{session_key}:img:non_flooded")
         uncertain_raw = await get_decoded_list(f"{session_key}:img:uncertain")
 
         def split_items(items):
@@ -81,20 +80,16 @@ class ReportDataManager:
             return parsed
 
         flooded = split_items(flooded_raw)
-        nonf = split_items(nonf_raw)
         uncert = split_items(uncertain_raw)
         
         data["image"] = {
             "flooded": [fid for fid, _ in flooded],
-            "non_flooded": [fid for fid, _ in nonf],
             "uncertain": [fid for fid, _ in uncert]
         }
 
         images_list = []
         for fid, conf in flooded:
             images_list.append({"file_id": fid, "label": "flooded", "confidence": conf})
-        for fid, conf in nonf:
-            images_list.append({"file_id": fid, "label": "non_flooded", "confidence": conf})
         for fid, conf in uncert:
             images_list.append({"file_id": fid, "label": "uncertain", "confidence": conf})
         data["images"] = images_list
@@ -106,5 +101,4 @@ class ReportDataManager:
         session_key = self._get_session_key(chat_id)
         await self.cache.delete(report_key)
         await self.cache.delete(f"{session_key}:img:flooded")
-        await self.cache.delete(f"{session_key}:img:non_flooded")
         await self.cache.delete(f"{session_key}:img:uncertain")

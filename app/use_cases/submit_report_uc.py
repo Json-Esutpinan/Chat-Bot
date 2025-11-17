@@ -24,7 +24,6 @@ class SubmitReportUseCase:
             old = report_data.get("image", {})
             images_meta = (
                 [{"file_id": fid, "label": "flooded", "confidence": report_data.get("photo_confidence", 0.0)} for fid in old.get("flooded", [])] +
-                [{"file_id": fid, "label": "non_flooded", "confidence": report_data.get("photo_confidence", 0.0)} for fid in old.get("non_flooded", [])] +
                 [{"file_id": fid, "label": "uncertain", "confidence": report_data.get("photo_confidence", 0.0)} for fid in old.get("uncertain", [])]
             )
 

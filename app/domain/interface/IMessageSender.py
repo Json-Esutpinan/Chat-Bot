@@ -6,4 +6,8 @@ class IMessageSender(ABC):
     def send(self, message:str,chat_id:str,reply_markup:Optional[Any]=None):pass
     @abstractmethod
     def build_inline_keyboard(self, buttons: list) -> Any: pass
+    @abstractmethod
+    def build_reply_keyboard(self, buttons: list, **kwargs) -> Any: pass
+    @abstractmethod
+    def remove_keyboard(self) -> Any: pass
         

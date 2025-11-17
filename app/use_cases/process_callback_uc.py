@@ -12,7 +12,11 @@ class ProcessCallbackUseCase:
         state = await self.state_manager.get_state(chat_id)
         if state == State.WAIT_CONFIRMATION:
             if data == "confirm_report":
-                await self.bot.send(message="¡Genial! Por favor, envíame una breve descripción de la inundación.", chat_id=chat_id)
+                await self.bot.send(
+                    message="¡Genial! Por favor, envíame una breve descripción de la inundación.",
+                    chat_id=chat_id,
+                    reply_markup=self.bot.remove_keyboard()
+                )
                 await self.state_manager.advance(chat_id)
                 return
             elif data == "cancel_report":
