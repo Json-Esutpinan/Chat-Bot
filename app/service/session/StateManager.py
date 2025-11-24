@@ -1,6 +1,7 @@
 from typing import Optional
 from app.service.session.State import State
 from app.domain.interface.ICacheRepository import ICacheRepository
+from app.domain.interface.IStateManager import IStateManager
 
 TRANSITIONS = {
     State.START:            State.WAIT_CONFIRMATION,
@@ -10,7 +11,7 @@ TRANSITIONS = {
     State.WAIT_PHOTO:       State.COMPLETED,
 }
 
-class StateManager:
+class StateManager(IStateManager):
     key_prefix = "state"
     def __init__(self,cache_repo: ICacheRepository):
         self.redis = cache_repo

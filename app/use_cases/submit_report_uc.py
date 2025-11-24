@@ -1,5 +1,5 @@
 import io
-from app.service.session.ReportDataManager import ReportDataManager
+from app.domain.interface.IReportDataManager import IReportDataManager
 from app.domain.interface.IPhotoSource import IPhotoSource
 from app.domain.interface.IReportApi import IReportApi
 import json
@@ -7,7 +7,7 @@ import json
 class SubmitReportUseCase:
     def __init__(
         self, 
-        report_data_manager: ReportDataManager,
+        report_data_manager: IReportDataManager,
         photo_source: IPhotoSource,
         report_api: IReportApi
     ):

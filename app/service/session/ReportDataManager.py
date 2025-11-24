@@ -1,7 +1,8 @@
 from typing import Any
 from app.domain.interface.ICacheRepository import ICacheRepository
+from app.domain.interface.IReportDataManager import IReportDataManager
 
-class ReportDataManager:
+class ReportDataManager(IReportDataManager):
     
     key_sufix = "report_data"
     

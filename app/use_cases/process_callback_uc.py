@@ -1,9 +1,10 @@
-from app.service.session.StateManager import StateManager, State
+from app.domain.interface.IStateManager import IStateManager
+from app.service.session.State import State
 from app.domain.interface.IMessageSender import IMessageSender
 from app.use_cases.submit_report_uc import SubmitReportUseCase
 
 class ProcessCallbackUseCase:
-    def __init__(self, state_manager:StateManager, bot_repo: IMessageSender, submit_report: SubmitReportUseCase):
+    def __init__(self, state_manager:IStateManager, bot_repo: IMessageSender, submit_report: SubmitReportUseCase):
         self.state_manager = state_manager
         self.bot = bot_repo
         self.submit_report = submit_report

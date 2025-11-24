@@ -16,7 +16,9 @@ from app.domain.interface.ICacheRepository import ICacheRepository
 from app.domain.interface.IReportApi import IReportApi
 from app.domain.interface.IPhotoSource import IPhotoSource
 from app.domain.interface.IMessageSender import IMessageSender
-from app.domain.interface.IModelClassifier import IModelClassifier 
+from app.domain.interface.IModelClassifier import IModelClassifier
+from app.domain.interface.IStateManager import IStateManager
+from app.domain.interface.IReportDataManager import IReportDataManager 
 
 from app.use_cases.process_callback_uc import ProcessCallbackUseCase
 from app.use_cases.process_message_uc import ProcessMessageUseCase
@@ -69,16 +71,16 @@ def get_flood_model() -> IModelClassifier:
     return _flood_model
 
 # --- Singletons de Servicios/Managers ---
-_state_manager: Optional[StateManager] = None
-_report_manager: Optional[ReportDataManager] = None
+_state_manager: Optional[IStateManager] = None
+_report_manager: Optional[IReportDataManager] = None
 
-def get_state_manager() -> StateManager:
+def get_state_manager() -> IStateManager:
     global _state_manager
     if _state_manager is None:
         _state_manager = StateManager(cache_repo=get_redis_repo())
     return _state_manager
 
-def get_report_data_manager() -> ReportDataManager:
+def get_report_data_manager() -> IReportDataManager:
     global _report_manager
     if _report_manager is None:
         _report_manager = ReportDataManager(cache_repository=get_redis_repo())

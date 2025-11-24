@@ -3,7 +3,7 @@ import httpx
 
 class ReportApiClient(IReportApi):
     def __init__(self, api_url: str):
-        self.api_url = "http://localhost:8001/api/reports"
+        self.api_url = api_url
 
     async def send_report(self, data: dict, files: list) -> dict:
         async with httpx.AsyncClient(timeout=30.0) as client:

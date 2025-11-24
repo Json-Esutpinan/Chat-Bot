@@ -1,17 +1,17 @@
 from app.domain.value_objects.format_text import FormatText
 from app.domain.value_objects.valid_location import ValidLocation
 from app.domain.interface.IMessageSender import IMessageSender
-from app.service.session.StateManager import StateManager
-from app.service.session.ReportDataManager import ReportDataManager
+from app.domain.interface.IStateManager import IStateManager
+from app.domain.interface.IReportDataManager import IReportDataManager
 from app.service.session.State import State
 from app.use_cases.process_photo_uc import ProcessPhotoUseCase
 
 class ProcessMessageUseCase:
     def __init__(
         self, bot_repo:IMessageSender, 
-        state_manager:StateManager, 
+        state_manager:IStateManager, 
         photo_process:ProcessPhotoUseCase,
-        report_manager:ReportDataManager,
+        report_manager:IReportDataManager,
         boundary=None):
         self.bot = bot_repo
         self.report_manager = report_manager
